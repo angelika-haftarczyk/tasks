@@ -1,9 +1,13 @@
 package pl.coderslab;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 public class TaskManager {
@@ -21,7 +25,7 @@ public class TaskManager {
 
             switch (input) {
                 case "add":
-//                    addTask();
+                    addTask();
                     System.out.println("add");
                     break;
                 case "remove":
@@ -40,6 +44,7 @@ public class TaskManager {
             input = scanner.nextLine();
 
         }
+        System.out.println(ConsoleColors.RED + "Bye, bye!");
 
 
 
@@ -73,7 +78,63 @@ public class TaskManager {
         return result;
     }
 
+    public static void addTask() {
+        System.out.println("add");
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Please add task description");
+        String description = scanner.nextLine();
+        System.out.println("Please add task due date with format yyyy-MM-dd");
+        String dateString = scanner.nextLine();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        while (true) {
+            try {
+                Date date = format.parse(dateString);
+                String resultDate = format.format(date);
+                if(dateString.equals(resultDate)) {
+                    break;
+                }
+            } catch (ParseException | IllegalArgumentException e) {
+
+            }
+            System.out.println("Wrong format. Please add task due date with format yyyy-MM-dd");
+            dateString = scanner.nextLine();
+        }
+
+        System.out.println("Is your task is important: true/false ?");
+        String important = scanner.nextLine();
+        while(true) {
+            if(important.equalsIgnoreCase("true") || important.equalsIgnoreCase("false")) {
+                break;
+            }
+            System.out.println("Is your task is important: true/false ?");
+            important = scanner.nextLine();
+        }
+        System.out.println("dodaje nowe zadanie");
+        String[] task = {description, dateString, important};
+        tasks = ArrayUtils.add(tasks, task);
+
+    }
+
     public static void removeTask() {
+        System.out.println("remove");
+        System.out.println("Please select number remove.");
+
+        Scanner scanner = new Scanner(System.in);
+        while(true) {
+            try {
+                String line = scanner.nextLine();
+                int indexToRemove = Integer.parseInt(line);
+                if(indexToRemove >= 0) {
+                    tasks = ArrayUtils.remove(tasks, indexToRemove);
+                    System.out.println("Value was successfully deleted.");
+                    break;
+                }
+
+            } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            }
+            System.out.println("Incorrect argument passed. Please give number greater or equal 0");
+        }
 
     }
 
