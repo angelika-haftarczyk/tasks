@@ -1,7 +1,6 @@
 package pl.coderslab;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -51,34 +50,52 @@ public class TaskManager {
 
 
     }
+    // wyświetlanie opcji wyboru
     public static void printOption() {
         System.out.println(ConsoleColors.BLUE + "Please select an option: ");
         System.out.print(ConsoleColors.RESET);
         System.out.println("add" + "\nremove" + "\nlist" + "\nexit");
     }
-
+// nowy sposób wczytywania
     public static String[][] readCsv(String fileName) {
-       StringBuilder sb = new StringBuilder();
+        String[][] result = new String[0][];
         try {
             FileReader reader = new FileReader(fileName);
             Scanner scanner = new Scanner(reader);
             while (scanner.hasNextLine()) {
-               String line = scanner.nextLine();
-               sb.append(line).append("\n");
+                String line = scanner.nextLine();
+                String[] words = line.split(", ");
+                result = ArrayUtils.add(result, words);
             }
-        } catch (IOException e) {
+        } catch (IOException | ArrayIndexOutOfBoundsException e) {
             System.out.println(e.getMessage());
-        }
-        String content = sb.toString();
-        String[] lines = content.split("\n");
-        String[][] result = new String[lines.length][3];
-        for (int i = 0; i < lines.length; i++) {
-            String[] line = lines[i].split(", ");
-            result[i] = line;
         }
         return result;
     }
+    // stary sposób wczytywania
+//    public static String[][] readCsv(String fileName) {
+//        StringBuilder sb = new StringBuilder();
+//        try {
+//            FileReader reader = new FileReader(fileName);
+//            Scanner scanner = new Scanner(reader);
+//            while (scanner.hasNextLine()) {
+//                String line = scanner.nextLine();
+//                sb.append(line).append("\n");
+//            }
+//        } catch (IOException e) {
+//            System.out.println(e.getMessage());
+//        }
+//        String content = sb.toString();
+//        String[] lines = content.split("\n");
+//        String[][] result = new String[lines.length][3];
+//        for (int i = 0; i < lines.length; i++) {
+//            String[] line = lines[i].split(", ");
+//            result[i] = line;
+//        }
+//        return result;
+//    }
 
+    //dodawanie zadań
     public static void addTask() {
         System.out.println("add");
         Scanner scanner = new Scanner(System.in);
@@ -92,7 +109,7 @@ public class TaskManager {
             try {
                 Date date = format.parse(dateString);
                 String resultDate = format.format(date);
-                if(dateString.equals(resultDate)) { // porówanie np. czy ktoś nie podał błędnego np. 13 miesiąca
+                if(dateString.equals(resultDate)) { //porówanie np. czy ktoś nie podał błędnych wartości np. 13 miesiąca
                     break;
                 }
             } catch (ParseException | IllegalArgumentException e) {
@@ -116,7 +133,7 @@ public class TaskManager {
         tasks = ArrayUtils.add(tasks, task);
 
     }
-
+// usuwanie zadań
     public static void removeTask() {
         System.out.println("remove");
         System.out.println("Please select number remove.");
@@ -139,6 +156,7 @@ public class TaskManager {
 
     }
 
+    //wyświetlanie listy zadań
     public static void listTask(){
         System.out.println("list");
         for (int i = 0; i < tasks.length; i++) {
@@ -148,6 +166,7 @@ public class TaskManager {
         }
     }
 
+    //zapisywanie i zastępowanie starej listy zadań
     public static void saveCsv() {
         try (FileWriter fileWriter = new FileWriter("tasks.csv", false)){
             for (int i = 0; i < tasks.length; i++) {
@@ -162,6 +181,5 @@ public class TaskManager {
         }
 
     }
-
 
 }
