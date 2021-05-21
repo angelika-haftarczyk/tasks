@@ -4,6 +4,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,8 +45,9 @@ public class TaskManager {
             input = scanner.nextLine();
 
         }
-        System.out.println(ConsoleColors.RED + "Bye, bye!");
+        saveCsv();
 
+        System.out.println(ConsoleColors.RED + "Bye, bye!");
 
 
     }
@@ -63,7 +65,6 @@ public class TaskManager {
             while (scanner.hasNextLine()) {
                String line = scanner.nextLine();
                sb.append(line).append("\n");
-//               String[] newLine = line.split(", ");
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -91,7 +92,7 @@ public class TaskManager {
             try {
                 Date date = format.parse(dateString);
                 String resultDate = format.format(date);
-                if(dateString.equals(resultDate)) {
+                if(dateString.equals(resultDate)) { // porówanie np. czy ktoś nie podał błędnego np. 13 miesiąca
                     break;
                 }
             } catch (ParseException | IllegalArgumentException e) {
@@ -110,7 +111,7 @@ public class TaskManager {
             System.out.println("Is your task is important: true/false ?");
             important = scanner.nextLine();
         }
-        System.out.println("dodaje nowe zadanie");
+        System.out.println("Added new task");
         String[] task = {description, dateString, important};
         tasks = ArrayUtils.add(tasks, task);
 
@@ -145,6 +146,21 @@ public class TaskManager {
             System.out.println(i+" : " + task[0] + " "+ task[1] + " " + task[2]);
 
         }
+    }
+
+    public static void saveCsv() {
+        try (FileWriter fileWriter = new FileWriter("tasks.csv", false)){
+            for (int i = 0; i < tasks.length; i++) {
+                String[] task = tasks[i];
+                String description = task[0];
+                String date = task[1];
+                String important = task[2];
+                fileWriter.append(description).append(", ").append(date).append(", ").append(important).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
